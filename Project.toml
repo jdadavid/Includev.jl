@@ -1,0 +1,15 @@
+name = "vinclude"
+uuid = "e5a02961-1381-425b-9c26-eade1493a3cd"
+authors = ["Jacques David <jacques.david@free.fr>"]
+version = "0.1.0"
+
+[deps]
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
+
+[compat]
+julia = "^1"
