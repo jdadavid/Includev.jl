@@ -1,6 +1,6 @@
 ```@meta
 DocTestSetup  = quote
-    using vinclude
+    using Vinclude
 end
 ```
 # vinclude

@@ -1,11 +1,11 @@
 push!(LOAD_PATH,joinpath(@__DIR__, ".."))
-using Documenter, vinclude
+using Documenter, Vinclude
 
 makedocs(
-    modules = [vinclude],
+    modules = [Vinclude],
     format = Documenter.HTML(; prettyurls = get(ENV, "CI", nothing) == "true"),
     authors = "Jacques David",
-    sitename = "vinclude.jl",
+    sitename = "Vinclude.jl",
     pages = Any["index.md"]
     # strict = true,
     # clean = true,
@@ -13,5 +13,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/jdadavid/vinclude.jl.git",
+    repo = "github.com/jdadavid/Vinclude.jl.git",
 )
