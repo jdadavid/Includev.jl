@@ -1,10 +1,8 @@
 module Includev
+# jdad's include with verbose, like source(...,verbose=true) in R
 
 using Printf
-
 export includev, includeve
-
-# jdad's include with verbose, like source(...,verbose=true) in R
 
 # Utilities : functions ends_with_semicolon, ends_with_newline
 
@@ -69,7 +67,7 @@ function ends_with_semicolon(line::AbstractString)
     return false
 end
 
-# utilitie : prettytime / from BenchmarkTools
+# utility : prettytime / from BenchmarkTools
 function prettytime(t)
     if t < 1e3
         value, units = t, "ns"
@@ -83,9 +81,13 @@ function prettytime(t)
     return string(@sprintf("%.3f", value), " ", units)
 end
 
+# end utilities
 
-
-function includev(filetoinc::AbstractString ;debug=false, elaps=false, logfile=nothing)
+"""
+    includev(filetoinc::AbstractString; echo=true,verbose=false, elaps=false, logfile=nothing, debug=false)
+	
+"""
+function includev(filetoinc::AbstractString; echo=true, verbose=false, elaps=false, logfile=nothing, debug=false)
   scalet=1.0e-9
   t0=time_ns()
   open(filetoinc) do f
@@ -100,7 +102,6 @@ function includev(filetoinc::AbstractString ;debug=false, elaps=false, logfile=n
 	tf=td
 	dt=tf-td
     while true
-        #write(repl.terminal, JULIA_PROMPT)
 		ps=""
 		#td=time_ns()*scalet
 		if elaps
@@ -126,7 +127,6 @@ function includev(filetoinc::AbstractString ;debug=false, elaps=false, logfile=n
 			else
 			    lines= lines * oneline
 				write(stdout, ps2 * oneline)
-				#ends_with_newline(line) || write(stdout, '\n')
 			end
 			ends_with_newline(oneline) || write(stdout, '\n')
 	        debug && write(stdout,"\n$il lineafter="*line)
@@ -151,42 +151,24 @@ function includev(filetoinc::AbstractString ;debug=false, elaps=false, logfile=n
             (isa(ast,Expr) && ast.head == :incomplete) || break
 	    debug && @show isa(ast,Expr)
 	    debug && @show ast.head
-	    (ile>0) && (il > ile) && @info "jdincl : max $ilx number of lines in expr reached" && break
-	    (ilx>0) && (il > ilx) && @info "jdincl : max $ilx number of lines to process reached" && break
+	    (ile>0) && (il > ile) && @info "includev : max $ilx number of lines in expr reached" && break
+	    (ilx>0) && (il > ilx) && @info "includev : max $ilx number of lines to process reached" && break
         end
         ast = Base.parse_input_line(line)
-        #(isa(ast,Expr) && ast.head == :incomplete) && @info "east : expr is incomplete"
-	#debug && @show isa(ast,Expr)
-	#debug && @show ast.head
-        #if !isempty(line)
         if isa(ast,Expr)
 	        debug && write(stdout,"evaling=")
-	        #write(stdout,line)
-            #ends_with_newline(line) || write(stdout, '\n')
-	        line_to_eval=line
-	        #if(elaps)
-	        #  line_to_eval="@time " * line
-	        #  print("\n timing $line_to_eval\n")
-	        #end
-            #eval(line_to_eval)
+			line_to_eval=line
 			td=(time_ns()-t0)*scalet
             include_string(Main,line_to_eval)
 			tf=(time_ns()-t0)*scalet
 			dt=tf-td
 	        debug && write(stdout,"...evaling complete.")
-            #eval("ans="*line)
             if !ends_with_semicolon(line)
 	        debug && write(stdout,"...should output response?")
-		    #@show ans
-                # print_response(repl, val, bt, true, false)
             end
         else
 			debug && write(stdout,"not_an expr-ignoring=")
-			#write(stdout,line)
-            #ends_with_newline(line) || write(stdout, '\n')
         end
-        #write(stdout, '\n')
-        #ends_with_newline(line) || write(stdout, '\n')
         ((!interrupted && isempty(line)) || hit_eof) && break
 	(ilx>0) && (il > ilx) && @info "jdincl : max $ilx number of lines to process reached" && break
     end
@@ -196,14 +178,5 @@ function includev(filetoinc::AbstractString ;debug=false, elaps=false, logfile=n
 end
 
 includeve(filetoinc::AbstractString ;debug=false, logfile=nothing) = includev(filetoinc; debug=debug, elaps=true, logfile=logfile)
-
-function test_includev()
-  testfiletoinc = joinpath(homedir(),"jl","julia-beks1.jl")
-  includev(testfiletoinc)
-  s=10
-  #@show "jdincl - done - sleeping $s"
-  sleep(s)
-  #@show "jdincl - quit"
-end
 
 end # module
