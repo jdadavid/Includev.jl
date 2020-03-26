@@ -84,10 +84,10 @@ end
 # end utilities
 
 """
-    includev(filetoinc::AbstractString; echo=true,verbose=false, elaps=false, logfile=nothing, debug=false)
-	
+    includev(filetoinc::AbstractString; echo=true, elaps=false, logfile=nothing, debug=false)
+    
 """
-function includev(filetoinc::AbstractString; echo=true, verbose=false, elaps=false, logfile=nothing, debug=false)
+function includev(filetoinc::AbstractString; echo=true, elaps=false, logfile=nothing, debug=false)
   scalet=1.0e-9
   t0=time_ns()
   open(filetoinc) do f
@@ -96,41 +96,43 @@ function includev(filetoinc::AbstractString; echo=true, verbose=false, elaps=fal
     ilx=9999
     hit_eof = false
     prompt=filetoinc * "> "
-	xps1="> "
-	xps2=". "
-	td=(time_ns()-t0)*scalet
-	tf=td
-	dt=tf-td
-    while true
-		ps=""
-		#td=time_ns()*scalet
-		if elaps
-		    ps=@sprintf("%9.6f/%9.6f",dt,td)
-		end
-		ps1= ps * xps1
-		ps2= ps * xps2
+    xps1="> "
+    xps2=". "
+    td=(time_ns()-t0)*scalet
+    tf=td; 
+    dt=tf-td
+    while true # 1
+        ps=""
+        #td=time_ns()*scalet
+        if elaps
+            ps=@sprintf("+%9.6f=%9.6f",dt,td)
+        end
+        ps1= ps * xps1
+        ps2= ps * xps2
         line = ""
         ast = nothing
         interrupted = false
-		lined=""
-		lines=""
-		firstline = true
-        while true
+        lined=""
+        lines=""
+        firstline = true
+        while true # 2
             try
-	        debug && write(stdout,"\n$il linebefor="*line)
+            debug && write(stdout,"\n$il linebefor="*line)
             oneline = readline(f, keep=true)
-			line = line * oneline
-			if firstline
-			    lined = oneline
-				firstline = false
-				write(stdout, ps1 * oneline)
-			else
-			    lines= lines * oneline
-				write(stdout, ps2 * oneline)
+            line = line * oneline
+            if firstline
+                lined = oneline
+                firstline = false
+                echo && write(stdout, ps1 * oneline)
+            else
+                lines= lines * oneline
+                echo && write(stdout, ps2 * oneline)
+            end
+			if !ends_with_newline(oneline)
+                echo && write(stdout, '\n')
 			end
-			ends_with_newline(oneline) || write(stdout, '\n')
-	        debug && write(stdout,"\n$il lineafter="*line)
-			il += 1
+            debug && write(stdout,"\n$il lineafter="*line)
+            il += 1
             catch e
                 if isa(e,InterruptException)
                     try # raise the debugger if present
@@ -149,34 +151,36 @@ function includev(filetoinc::AbstractString; echo=true, verbose=false, elaps=fal
             end
             ast = Base.parse_input_line(line)
             (isa(ast,Expr) && ast.head == :incomplete) || break
-	    debug && @show isa(ast,Expr)
-	    debug && @show ast.head
-	    (ile>0) && (il > ile) && @info "includev : max $ilx number of lines in expr reached" && break
-	    (ilx>0) && (il > ilx) && @info "includev : max $ilx number of lines to process reached" && break
-        end
+            debug && @show isa(ast,Expr)
+            debug && @show ast.head
+            (ile>0) && (il > ile) && @info "includev : max $ilx number of lines in expr reached" && break
+            (ilx>0) && (il > ilx) && @info "includev : max $ilx number of lines to process reached" && break
+        end # while true 2
+		# Now we have (hopefully) a group of lines with complete expression
         ast = Base.parse_input_line(line)
         if isa(ast,Expr)
-	        debug && write(stdout,"evaling=")
-			line_to_eval=line
-			td=(time_ns()-t0)*scalet
+            debug && write(stdout,"evaling=")
+            line_to_eval = line
+            td = (time_ns()-t0)*scalet
             include_string(Main,line_to_eval)
-			tf=(time_ns()-t0)*scalet
-			dt=tf-td
-	        debug && write(stdout,"...evaling complete.")
+            tf = (time_ns()-t0)*scalet
+            dt = tf-td
+            debug && write(stdout,"...evaling complete.")
             if !ends_with_semicolon(line)
-	        debug && write(stdout,"...should output response?")
+            debug && write(stdout,"...should output response?") # no ans as of now
             end
         else
-			debug && write(stdout,"not_an expr-ignoring=")
+            debug && write(stdout,"not_an expr-ignoring=")
         end
         ((!interrupted && isempty(line)) || hit_eof) && break
-	(ilx>0) && (il > ilx) && @info "jdincl : max $ilx number of lines to process reached" && break
-    end
-  end
-    # terminate backend
-    nothing
-end
+        (ilx>0) && (il > ilx) && @info "includev : max $ilx number of lines to process reached" && break
+    end # while true # 1
+  end # do f
+  # terminate backend
+  # as of now,  do not get last ans as returned result
+  nothing
+end # function
 
-includeve(filetoinc::AbstractString ;debug=false, logfile=nothing) = includev(filetoinc; debug=debug, elaps=true, logfile=logfile)
+includeve(filetoinc::AbstractString ;echo=true, logfile=nothing, debug=false) = includev(filetoinc; echo=echo, elaps=true, logfile=logfile, debug=debug)
 
 end # module
