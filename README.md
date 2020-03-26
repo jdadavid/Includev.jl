@@ -1,4 +1,4 @@
-# vinclude.jl
+# includev.jl
 
 ![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)<!--
 ![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
@@ -6,5 +6,5 @@
 ![Lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
 ![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg) -->
-[![Build Status](https://travis-ci.com/jdadavid/vinclude.jl.svg?branch=master)](https://travis-ci.com/jdadavid/vinclude.jl)
-[![codecov.io](http://codecov.io/github/jdadavid/vinclude.jl/coverage.svg?branch=master)](http://codecov.io/github/jdadavid/vinclude.jl?branch=master)
+[![Build Status](https://travis-ci.com/jdadavid/includev.jl.svg?branch=master)](https://travis-ci.com/jdadavid/includev.jl)
+[![codecov.io](http://codecov.io/github/jdadavid/includev.jl/coverage.svg?branch=master)](http://codecov.io/github/jdadavid/includev.jl?branch=master)

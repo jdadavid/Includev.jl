@@ -1,4 +1,4 @@
-The vinclude.jl package is licensed under the MIT "Expat" License:
+The Includev.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2020: Jacques David.
 >

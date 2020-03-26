@@ -1,9 +1,9 @@
 ```@meta
 DocTestSetup  = quote
-    using Vinclude
+    using Includev
 end
 ```
-# vinclude
+# includev
 
 *Documentation goes here.*
 
@@ -59,6 +59,6 @@ julia> a + b + c
 ### @autodocs
 
 ```@autodocs
-Modules = [vinclude]
+Modules = [Includev]
 Order   = [:function, :type]
 ```
