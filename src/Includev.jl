@@ -105,7 +105,7 @@ function includev(filetoinc::AbstractString; echo=true, elaps=false, logfile=not
         ps=""
         #td=time_ns()*scalet
         if elaps
-            ps=@sprintf("+%9.6f=%9.6f",dt,td)
+            ps=@sprintf("+%9.6f =%9.6f",dt,td)
         end
         ps1= ps * xps1
         ps2= ps * xps2
@@ -178,7 +178,7 @@ function includev(filetoinc::AbstractString; echo=true, elaps=false, logfile=not
   end # do f
   # terminate backend
   # as of now,  do not get last ans as returned result
-  nothing
+  # nothing
 end # function
 
 includeve(filetoinc::AbstractString ;echo=true, logfile=nothing, debug=false) = includev(filetoinc; echo=echo, elaps=true, logfile=logfile, debug=debug)
